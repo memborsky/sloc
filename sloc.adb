@@ -26,10 +26,10 @@ Procedure sloc is
   File_Handle : Ada.Text_IO.File_Type;
 
   -- All the counters we use in calculating the lines of code for given file.
-  Line_Count        : Integer := 0;
-  Code_Count        : Integer := 0;
-  Comment_Count     : Integer := 0;
-  Null_Count        : Integer := 0;
+  Line_Count    : Integer := 0;
+  Code_Count    : Integer := 0;
+  Comment_Count : Integer := 0;
+  Null_Count    : Integer := 0;
 
   -- Total counters for keeping total of all given files.
   Total_Line_Count    : Integer := 0;
@@ -55,6 +55,23 @@ Procedure sloc is
     End Loop;
 
   End Skip_White_Space;
+
+  -- Output_Count - Output a single line of data
+  -- @Counter_Identifier: Gives the description of the count we are outputting.
+  -- @Count: The count of the specific identifier.
+  -- @Number_Of_New_Lines: Allows us to simplify the code inside the actual application to just shove new lines in here.
+  --
+  -- This procedure cleans up the code below to all us to do the same procedural statements
+  -- without having to write them 8 times over.
+  Procedure Output_Count (Count_Identifier : String; Count : Integer; Number_Of_New_Lines : Ada.Text_IO.Count) is
+
+  Begin
+
+    Ada.Text_IO.Put(Count_Identifier);
+    Ada.Integer_Text_IO.Put(Count, 0);
+    Ada.Text_IO.New_Line(Number_Of_New_Lines);
+
+  End Output_Count;
 
 Begin
 
@@ -136,51 +153,48 @@ Begin
       -- large file sets.
       Ada.Text_IO.Close(File_Handle);
 
-      -- Begin Data Output for file counts.
+    -- Begin Data Output for file counts.
+
+      -- The file name for the specific file
       Ada.Text_IO.Put_Line("File Name: " & Ada.Command_Line.Argument(Current_Argument_Count));
 
-      Ada.Text_IO.Put("Code Line Count:    ");
-      Ada.Integer_Text_IO.Put(Code_Count, 0);
-      Ada.Text_IO.New_Line;
+      -- Coded line count for specific file.
+      Output_Count("Code Line Count:    ", Code_Count, 1);
 
-      Ada.Text_IO.Put("Comment Line Count: ");
-      Ada.Integer_Text_IO.Put(Comment_Count, 0);
-      Ada.Text_IO.New_Line;
+      -- Comment line count for specific file.
+      Output_Count("Comment Line Count: ", Comment_Count, 1);
 
-      Ada.Text_IO.Put("Null Line Count:    ");
-      Ada.Integer_Text_IO.Put(Null_Count, 0);
-      Ada.Text_IO.New_Line;
+      -- Nulled line count for specific file.
+      Output_Count("Null Line Count:    ", Null_Count, 1);
 
-      Ada.Text_IO.Put("File Line Count:    ");
-      Ada.Integer_Text_IO.Put(Line_Count, 0);
-      Ada.Text_IO.New_Line(2);
-      -- End Data Output for file counts.
+      -- Total line count for specific file.
+      Output_Count("File Line Count:    ", Line_Count, 2);
+
+    -- End Data Output for file counts.
 
       -- Add to totals the current file counts.
-      Total_Line_Count    := Total_Line_Count + Line_Count;
+      Total_Line_Count    := Total_Line_Count    + Line_Count;
       Total_Comment_Count := Total_Comment_Count + Comment_Count;
-      Total_Null_Count    := Total_Null_Count + Null_Count;
-      Total_Code_Count    := Total_Code_Count + Code_Count;
+      Total_Null_Count    := Total_Null_Count    + Null_Count;
+      Total_Code_Count    := Total_Code_Count    + Code_Count;
 
     End Loop;
 
-    -- Begin Data Output for total counts.
-    Ada.Text_IO.Put("Total Code Count:    ");
-    Ada.Integer_Text_IO.Put(Total_Code_Count, 0);
-    Ada.Text_IO.New_Line;
+  -- Begin Data Output for total counts.
 
-    Ada.Text_IO.Put("Total Comment Count: ");
-    Ada.Integer_Text_IO.Put(Total_Comment_Count, 0);
-    Ada.Text_IO.New_Line;
+    -- Total coded line count for all files.
+    Output_Count("Total Code Count:    ", Total_Code_Count, 1);
 
-    Ada.Text_IO.Put("Total Null Count:    ");
-    Ada.Integer_Text_IO.Put(Total_Null_Count, 0);
-    Ada.Text_IO.New_Line;
+    -- Total comments counted for all files.
+    Output_Count("Total Comment Count: ", Total_Comment_Count, 1);
 
-    Ada.Text_IO.Put("Total Line Count:    ");
-    Ada.Integer_Text_IO.Put(Total_Line_Count, 0);
-    Ada.Text_IO.New_Line(2);
-    -- End Data Output for total counts.
+    -- Total nulled lines counted for all files.
+    Output_Count("Total Null Count:    ", Total_Null_Count, 1);
+
+    -- Total lines counted for all files.
+    Output_Count("Total Line Count:    ", Total_Line_Count, 2);
+
+  -- End Data Output for total counts.
 
   End If;
 
